@@ -11,7 +11,7 @@ namespace NZWalks.API.Controllers
 {
     // https://localhost:1234/api/regions
     [Route("api/[controller]")] // same as  [Route("api/regions")]
-    [ApiController]
+    [ApiController] // The ApiController attribute will tell this app;ication that this controller is for API use.
     public class RegionsController : ControllerBase
     {
         private readonly NZWalksDbContext dbContext;
@@ -24,6 +24,8 @@ namespace NZWalks.API.Controllers
             this.regionRepository = regionRepository;
             this.mapper = mapper;
         }
+
+        // Action methods
 
         // GET ALL REGIONS
         // GET: https://localhost:port/api/regions
@@ -72,7 +74,7 @@ namespace NZWalks.API.Controllers
             return CreatedAtAction(nameof(GetById), new { id = regionDto.Id }, regionDto);
         }
 
-        // pPdate region
+        // Update region
         // PUT: https://localhost:port/api/regions/{id}
         [HttpPut]
         [Route("{id:Guid}")]

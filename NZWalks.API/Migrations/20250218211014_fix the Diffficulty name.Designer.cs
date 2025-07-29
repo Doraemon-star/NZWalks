@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using NZWalks.API.Data;
 
@@ -11,9 +12,11 @@ using NZWalks.API.Data;
 namespace NZWalks.API.Migrations
 {
     [DbContext(typeof(NZWalksDbContext))]
-    partial class NZWalksDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250218211014_fix the Diffficulty name")]
+    partial class fixtheDiffficultyname
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -22,7 +25,7 @@ namespace NZWalks.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("NZWalks.API.Models.Domain.Difficulty", b =>
+            modelBuilder.Entity("NZWalks.API.Models.Domain.Diffficulty", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -127,6 +130,9 @@ namespace NZWalks.API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<Guid>("DiffficultyId")
+                        .HasColumnType("uniqueidentifier");
+
                     b.Property<Guid>("DifficultyId")
                         .HasColumnType("uniqueidentifier");
 
@@ -145,7 +151,7 @@ namespace NZWalks.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("DifficultyId");
+                    b.HasIndex("DiffficultyId");
 
                     b.HasIndex("RegionId");
 
@@ -154,9 +160,9 @@ namespace NZWalks.API.Migrations
 
             modelBuilder.Entity("NZWalks.API.Models.Domain.Walk", b =>
                 {
-                    b.HasOne("NZWalks.API.Models.Domain.Difficulty", "Difficulty")
+                    b.HasOne("NZWalks.API.Models.Domain.Diffficulty", "Diffficulty")
                         .WithMany()
-                        .HasForeignKey("DifficultyId")
+                        .HasForeignKey("DiffficultyId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -166,7 +172,7 @@ namespace NZWalks.API.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Difficulty");
+                    b.Navigation("Diffficulty");
 
                     b.Navigation("Region");
                 });
