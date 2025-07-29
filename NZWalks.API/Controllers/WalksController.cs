@@ -5,6 +5,7 @@ using AutoMapper;
 using NZWalks.API.Models.Domain;
 using NZWalks.API.Repositories;
 using Microsoft.EntityFrameworkCore;
+using NZWalks.API.CustomActionFilters;
 
 namespace NZWalks.API.Controllers
 {
@@ -25,22 +26,16 @@ namespace NZWalks.API.Controllers
         // Create Walk
         // POST: /api/walks
         [HttpPost]
+        [ValidateModel]
         public async Task<IActionResult> Create([FromBody] AddWalkRequestDto addWalkRequestDto)
-        {
-            // Check the validation
-            if (ModelState.IsValid)
-            {
-                // Map AddWalkRequestDto to Walk Domain Model
-                var walkDomainModel = mapper.Map<Walk>(addWalkRequestDto);
+        { 
+            // Map AddWalkRequestDto to Walk Domain Model
+            var walkDomainModel = mapper.Map<Walk>(addWalkRequestDto);
 
-                await walkRepository.CreateAsync(walkDomainModel);
+            await walkRepository.CreateAsync(walkDomainModel);
 
-                return Ok(mapper.Map<WalkDTO>(walkDomainModel));
-            }
-            else
-            {
-                return BadRequest(ModelState);
-            }
+            return Ok(mapper.Map<WalkDTO>(walkDomainModel));
+            
         }
 
         // GET Walks
@@ -71,29 +66,24 @@ namespace NZWalks.API.Controllers
         // PUT:/api/Walks/{id}
         [HttpPut]
         [Route("{id:Guid}")]
+        [ValidateModel]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateWalkRequestDto UpdateWalkRequestDto)
         {
-            // Check the validation
-            if (ModelState.IsValid)
+           
+            // Map Dto to Doamil Model
+            var walkDomailModel = mapper.Map<Walk>(UpdateWalkRequestDto);
+
+            // Check if the walk exists
+            walkDomailModel = await walkRepository.UpdateAsync(id, walkDomailModel);
+
+            if (walkDomailModel == null)
             {
-                // Map Dto to Doamil Model
-                var walkDomailModel = mapper.Map<Walk>(UpdateWalkRequestDto);
-
-                // Check if the walk exists
-                walkDomailModel = await walkRepository.UpdateAsync(id, walkDomailModel);
-
-                if (walkDomailModel == null)
-                {
-                    return NotFound();
-                }
-
-                // Convert Domail Model to DTO and return DTO
-                return Ok(mapper.Map<WalkDTO>(walkDomailModel));
+                return NotFound();
             }
-            else
-            {
-                return BadRequest(ModelState);
-            }
+
+            // Convert Domail Model to DTO and return DTO
+            return Ok(mapper.Map<WalkDTO>(walkDomailModel));
+          
             
         }
 
