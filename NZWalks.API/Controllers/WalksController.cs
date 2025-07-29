@@ -27,12 +27,20 @@ namespace NZWalks.API.Controllers
         [HttpPost]
         public async Task<IActionResult> Create([FromBody] AddWalkRequestDto addWalkRequestDto)
         {
-            // Map AddWalkRequestDto to Walk Domain Model
-            var walkDomainModel = mapper.Map<Walk>(addWalkRequestDto);
+            // Check the validation
+            if (ModelState.IsValid)
+            {
+                // Map AddWalkRequestDto to Walk Domain Model
+                var walkDomainModel = mapper.Map<Walk>(addWalkRequestDto);
 
-            await walkRepository.CreateAsync(walkDomainModel);
+                await walkRepository.CreateAsync(walkDomainModel);
 
-            return Ok(mapper.Map<WalkDTO>(walkDomainModel));
+                return Ok(mapper.Map<WalkDTO>(walkDomainModel));
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
         }
 
         // GET Walks
@@ -65,19 +73,28 @@ namespace NZWalks.API.Controllers
         [Route("{id:Guid}")]
         public async Task<IActionResult> Update([FromRoute] Guid id, [FromBody] UpdateWalkRequestDto UpdateWalkRequestDto)
         {
-            // Map Dto to Doamil Model
-            var walkDomailModel = mapper.Map<Walk>(UpdateWalkRequestDto);
-
-            // Check if the walk exists
-            walkDomailModel = await walkRepository.UpdateAsync(id, walkDomailModel);
-
-            if (walkDomailModel == null)
+            // Check the validation
+            if (ModelState.IsValid)
             {
-                return NotFound();
-            }
+                // Map Dto to Doamil Model
+                var walkDomailModel = mapper.Map<Walk>(UpdateWalkRequestDto);
 
-            // Convert Domail Model to DTO and return DTO
-            return Ok(mapper.Map<WalkDTO>(walkDomailModel));
+                // Check if the walk exists
+                walkDomailModel = await walkRepository.UpdateAsync(id, walkDomailModel);
+
+                if (walkDomailModel == null)
+                {
+                    return NotFound();
+                }
+
+                // Convert Domail Model to DTO and return DTO
+                return Ok(mapper.Map<WalkDTO>(walkDomailModel));
+            }
+            else
+            {
+                return BadRequest(ModelState);
+            }
+            
         }
 
         // Delete Walk by Id
